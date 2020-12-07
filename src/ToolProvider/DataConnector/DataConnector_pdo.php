@@ -94,7 +94,7 @@ class DataConnector_pdo extends DataConnector
                     $consumer->consumerGuid = $row['consumer_guid'];
                     $consumer->profile = json_decode($row['profile']);
                     $consumer->toolProxy = $row['tool_proxy'];
-                    $settings = unserialize($row['settings']);
+                    $settings = substr($row->settings, 0, 2) === 'a:' ? unserialize($row['settings']) : json_decode($row['settings']);
                     if (!is_array($settings)) {
                         $settings = array();
                     }
@@ -144,7 +144,7 @@ class DataConnector_pdo extends DataConnector
         $protected = ($consumer->protected) ? 1 : 0;
         $enabled = ($consumer->enabled)? 1 : 0;
         $profile = (!empty($consumer->profile)) ? json_encode($consumer->profile) : null;
-        $settingsValue = serialize($consumer->getSettings());
+        $settingsValue = json_encode($consumer->getSettings());
         $time = time();
         $now = date("{$this->dateFormat} {$this->timeFormat}", $time);
         $from = null;
@@ -375,7 +375,7 @@ class DataConnector_pdo extends DataConnector
                 $consumer->consumerGuid = $row['consumer_guid'];
                 $consumer->profile = json_decode($row['profile']);
                 $consumer->toolProxy = $row['tool_proxy'];
-                $settings = unserialize($row['settings']);
+                $settings = substr($row->settings, 0, 2) === 'a:' ? unserialize($row['settings']) : json_decode($row['settings']);
                 if (!is_array($settings)) {
                     $settings = array();
                 }
@@ -477,7 +477,7 @@ class DataConnector_pdo extends DataConnector
             $context->setRecordId(intval($row['context_pk']));
             $context->setConsumerId(intval($row['consumer_pk']));
             $context->ltiContextId = $row['lti_context_id'];
-            $settings = unserialize($row['settings']);
+            $settings = substr($row->settings, 0, 2) === 'a:' ? unserialize($row['settings']) : json_decode($row['settings']);
             if (!is_array($settings)) {
                 $settings = array();
             }
@@ -502,7 +502,7 @@ class DataConnector_pdo extends DataConnector
 
         $time = time();
         $now = date("{$this->dateFormat} {$this->timeFormat}", $time);
-        $settingsValue = serialize($context->getSettings());
+        $settingsValue = json_encode($context->getSettings());
         $id = $context->getRecordId();
         $consumer_pk = $context->getConsumer()->getRecordId();
         if (empty($id)) {
@@ -660,7 +660,7 @@ class DataConnector_pdo extends DataConnector
                 $resourceLink->setConsumerId(null);
             }
             $resourceLink->ltiResourceLinkId = $row['lti_resource_link_id'];
-            $settings = unserialize($row['settings']);
+            $settings = substr($row->settings, 0, 2) === 'a:' ? unserialize($row['settings']) : json_decode($row['settings']);
             if (!is_array($settings)) {
                 $settings = array();
             }
@@ -690,7 +690,7 @@ class DataConnector_pdo extends DataConnector
 
         $time = time();
         $now = date("{$this->dateFormat} {$this->timeFormat}", $time);
-        $settingsValue = serialize($resourceLink->getSettings());
+        $settingsValue = json_encode($resourceLink->getSettings());
         if (!is_null($resourceLink->getContext())) {
             $consumerId = null;
             $contextId = strval($resourceLink->getContext()->getRecordId());
